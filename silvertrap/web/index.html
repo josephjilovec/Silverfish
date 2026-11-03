@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="SilverTrap private fraud research command center. Evidence-linked reconstruction in a controlled environment.">
+  <meta name="color-scheme" content="light"><title>SilverTrap — Fraud Intelligence</title>
+  <link rel="icon" href="/mark.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css">
+  <script defer src="/app.js"></script>
+</head>
+<body>
+<div id="login" class="login-shell">
+  <div class="login-card"><img src="/mark.svg" alt="" width="48" height="48"><p class="eyebrow">PRIVATE RESEARCH WORKSPACE</p><h1>SilverTrap<span class="mint">.</span></h1><p>See how the scam works.<br>Keep every conclusion tied to evidence.</p>
+    <form id="login-form"><label for="access-code">Operator access code</label><input id="access-code" type="password" autocomplete="current-password" required placeholder="Paste the code from your server terminal"><button class="button primary" type="submit">Open command center <span aria-hidden="true">↗</span></button></form>
+    <p id="login-error" role="alert" class="error"></p><small>The code stays in this tab’s memory. This workspace runs simulations and controlled research.</small>
+  </div><div class="login-art" aria-hidden="true"><div class="orbit o1"></div><div class="orbit o2"></div><div class="orbit o3"></div><span class="art-label">SIGNAL → EVIDENCE → UNDERSTANDING</span><span class="art-number">ST / 001</span></div>
+</div>
+<div id="workspace" class="workspace" hidden>
+  <aside class="sidebar"><a class="brand" href="#overview"><img src="/mark.svg" alt="" width="30" height="30"><span>SilverTrap<span class="mint">.</span></span></a><p class="sidebar-caption">FRAUD INTELLIGENCE</p>
+    <div class="workspace-badge"><span class="status-dot"></span><div>Research workspace<small>Private · Local-first</small></div></div>
+    <p class="nav-label">WORKSPACE</p><nav id="navigation" aria-label="Main navigation">
+      <a href="#overview" data-view="overview"><span class="nav-icon">◫</span> Overview</a>
+      <a href="#cases" data-view="cases"><span class="nav-icon">▤</span> Investigations <span id="case-count" class="nav-count">0</span></a>
+      <a href="#indicators" data-view="indicators"><span class="nav-icon">⌘</span> Indicator library</a>
+      <a href="#personas" data-view="personas"><span class="nav-icon">◎</span> Synthetic personas</a>
+      <p class="nav-label">OPERATIONS</p><a href="#controls" data-view="controls"><span class="nav-icon">⊞</span> Controls & limits</a>
+      <a href="#activity" data-view="activity"><span class="nav-icon">≋</span> Audit trail</a>
+    </nav>
+    <div class="sidebar-bottom"><div class="environment-card"><span class="status-dot"></span> Controlled environment<p>Simulation first.<br>Evidence at every step.</p></div><button id="lock" class="operator"><span class="avatar operator-avatar">OP</span><span>Local operator<small>Lock workspace ↗</small></span></button></div>
+  </aside>
+  <section class="main-shell"><header class="topbar"><button id="mobile-menu" class="icon-button" aria-label="Toggle navigation">☰</button><div class="breadcrumb">Command center <span>/</span> <strong id="crumb">Overview</strong></div><div class="topbar-right"><span class="top-mode"><span class="status-dot"></span> Simulation & research</span><button id="refresh" class="icon-button" aria-label="Refresh workspace">↻</button><span class="avatar">OP</span></div></header>
+    <main id="main" tabindex="-1"></main><footer class="page-footer"><span>SilverTrap <b>v0.1</b> · Private fraud research</span><span id="footer-state">External delivery is not installed</span></footer>
+  </section>
+</div>
+<dialog id="new-dialog" class="new-dialog"><div class="dialog-heading"><div><p class="eyebrow">CONTROLLED RESEARCH</p><h2>Start an investigation</h2></div><button id="close-dialog" class="icon-button" aria-label="Close dialog">×</button></div>
+  <div class="segmented"><button data-mode="simulation" class="selected">Simulation</button><button data-mode="research">Manual research</button><button data-mode="import">Import transcript</button></div>
+  <form id="new-form"><div id="simulation-fields"><p class="muted">Run a fictional scenario to inspect its methodology. No external party is contacted.</p><label for="scenario">Scenario</label><select id="scenario" name="scenario"></select><p id="scenario-description" class="scenario-description"></p><label class="checkbox"><input id="run-now" type="checkbox" checked> Reconstruct the complete scenario now</label></div>
+    <div id="research-fields" hidden><label for="case-title">Case title</label><input id="case-title" maxlength="120" placeholder="e.g. An unsolicited support message"><label for="persona">Synthetic persona</label><select id="persona"></select><p class="muted">Paste inbound messages into the case. Replies enter a local review queue; approval records a decision.</p></div>
+    <div id="import-fields" hidden><label for="import-title">Transcript title</label><input id="import-title" maxlength="120" placeholder="A descriptive title"><label for="import-json">Transcript JSON</label><textarea id="import-json" rows="8" spellcheck="false" placeholder='{"messages":[{"role":"inbound","text":"Message text"}]}'></textarea><small>Use inbound for source messages and persona for the other side. Imported transcripts open paused and remain read-only.</small></div>
+    <div class="dialog-footer"><span class="muted">All fixture identities are fictional.</span><button class="button primary" type="submit">Create investigation ↗</button></div><p id="dialog-error" class="error" role="alert"></p>
+  </form>
+</dialog>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</body></html>
