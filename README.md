@@ -1,30 +1,193 @@
 # SilverTrap
 
-**Reconstruct the operation behind the conversation.**
+**See how a suspected scam works, one message at a time.**
 
-SilverTrap is a private, simulation-first fraud research application. Three fictional older-adult personas participate in controlled conversations while a separate analyst pipeline records manipulation tactics, requested information, payment mechanisms, and the sequence of a suspected scam. Every finding links to an exact source quote. Missing stages remain unknown.
+SilverTrap turns a conversation into a map of the sender's tactics, information requests, and possible financial objective. Click any finding to inspect its source message. Start with fictional sample cases, then try your own research messages.
 
-This is a working v0.1 application, including a Python backend, persistent case database, authenticated browser command center, attack-chain explorer, synthetic scenarios, evidence exports, and regression tests. It runs with **Python 3.11+ and no third-party runtime dependencies**. No API key, paid model, Node build, Redis server, or database service is required.
+**No API key or paid AI service is needed.** The default analysis uses local programmed rules. You can optionally add real AI analysis through a local Ollama model. SilverTrap does not use your ChatGPT subscription. This version runs simulations and controlled research; it does not contact people or send external replies.
 
-![SilverTrap command center with synthetic cases and cross-case indicators](docs/images/command-center.jpg)
+[Windows setup](#start-here-windows) · [Your first test](#try-your-first-investigation) · [Local AI with Ollama](#add-local-ai-with-ollama-optional) · [Troubleshooting](#common-problems) · [Technical reference](#technical-reference)
 
-## Start on Windows
+## Start here: Windows
 
-Download or clone this private repository, open PowerShell in its folder, and run:
+### 1. Check Python and Git
+
+Open **PowerShell** and run these two commands:
 
 ```powershell
-py -3 -m silvertrap serve --seed
+python --version
+git --version
 ```
 
-Open **http://127.0.0.1:8787** and paste the operator access code printed in that terminal. Keep the terminal open while using the dashboard. `start.ps1` provides the same launch flow and keeps errors visible. Python must be version 3.11 or newer.
+You need **Python 3.11 or newer** and Git. If both commands show version numbers and Python is recent enough, continue to step 2. You do not need an administrator PowerShell window.
 
-On macOS or Linux:
+<details>
+<summary>Python or Git is missing? Open the installation instructions.</summary>
+
+If Python is missing or older than 3.11, install Python 3.13:
+
+```powershell
+winget install --exact --id Python.Python.3.13 --scope user
+```
+
+For Git, use the [official Git for Windows installer](https://git-scm.com/downloads/win). If `winget` is unavailable, use the [official Python Windows downloads](https://www.python.org/downloads/windows/). When a Python installer offers **Add Python to PATH**, select it.
+
+**Close PowerShell and reopen it after installation**, then run the two version checks again. Windows needs a new terminal to pick up installation changes.
+
+</details>
+
+### 2. Download SilverTrap onto your Desktop
+
+If you have access to this private repository and Git authentication is already connected, paste this entire block into PowerShell:
+
+```powershell
+$desktop = [Environment]::GetFolderPath('Desktop')
+Set-Location $desktop
+git clone https://github.com/josephjilovec/Silverfish.git
+Set-Location Silverfish
+```
+
+The Desktop command also handles a Desktop managed by OneDrive. The repository folder is called **Silverfish**; the application inside it is **SilverTrap**.
+
+**Already downloaded it?** Open that folder instead of cloning again. To reopen the default Desktop copy:
+
+```powershell
+Set-Location (Join-Path ([Environment]::GetFolderPath('Desktop')) 'Silverfish')
+```
+
+<details>
+<summary>Prefer downloading a ZIP instead of using Git?</summary>
+
+On this repository page, select **Code → Download ZIP**, extract it, and open the extracted folder containing `README.md`, `start.ps1`, and the `silvertrap` folder. Click File Explorer's address bar, type `powershell`, and press Enter. Your terminal will open in the correct project folder. Continue with step 3.
+
+</details>
+
+### 3. Start the application
+
+From the project folder, run:
+
+```powershell
+python -m silvertrap serve --seed
+```
+
+The terminal will show the app address and an **Operator access code**. Open **[http://127.0.0.1:8787](http://127.0.0.1:8787)** in your browser, paste that code into the login screen, and select **Open command center**. Your code is generated on your computer; keep it private.
+
+**Leave the PowerShell window open while using SilverTrap.** No `pip install`, Node setup, or database installation is needed. On an empty database, `--seed` creates three fictional sample investigations so you can test the product immediately.
+
+## Try your first investigation
+
+1. On **Overview**, open **The urgent support call**.
+2. Click **Information gathering** in the stage map. Read the findings, then select **Inspect source** to see the exact message behind one.
+3. Open **Evidence & gaps** to inspect the suspected financial objective, chronological findings, and unanswered questions.
+4. Select **Report** to download a readable report, or **Evidence** to download a JSON evidence package.
+
+**Want to watch a case develop?** Select **New investigation → Simulation**, choose a scenario, **uncheck “Reconstruct the complete scenario now,”** and select **Create investigation**. Click **Next exchange** to progress one exchange at a time. No external party is contacted.
+
+The three sample cases are already complete scenarios, so their **Next exchange** buttons are disabled. Create a fresh step-by-step simulation to use that button.
+
+### What the main screens mean
+
+| Screen | Use it to… |
+| --- | --- |
+| **Overview** | See your cases and open a sample investigation. |
+| **Investigations** | Search cases or create a new one. |
+| **Reconstruction** inside a case | Select a scam stage and inspect the evidence supporting it. |
+| **Transcript** inside a case | Read the conversation in order. |
+| **Evidence & gaps** inside a case | Review findings, hypotheses, chronology, and unknowns. |
+| **Review queue** inside a case | Inspect proposed persona questions and record local review decisions. |
+| **Indicator library** | Find contact details and websites appearing across cases. |
+| **Controls & limits** | Inspect resource limits or use the emergency stop. |
+
+**Observed phrase** means a rule matched the source text. **Hypothesis** means a possible interpretation, not a verified fact. **Unobserved** means a stage lacks evidence. The persona conversations use fictional identities; only inbound source messages feed the analysis. Research approvals do not send messages.
+
+To try outside material, choose **New investigation → Manual research**, name your case, and paste one source message into **Add an inbound research message**. Select **Analyze message**, then add later messages in their original order. Avoid importing real passwords or financial credentials.
+
+## Add local AI with Ollama (optional)
+
+**You can use and test the entire core app without this step.** Enabling Ollama adds a manually requested AI second opinion. The programmed rules still analyze messages automatically; the model runs when you click its button.
+
+### 1. Install Ollama and download a local model
+
+Install [Ollama for Windows](https://ollama.com/download/windows), open the Ollama application, and open a new PowerShell window. If you already have a local model installed, run `ollama list` and use its exact name in step 2.
+
+For a concrete example, download the local [Llama 3.2 3B model](https://ollama.com/library/llama3.2):
+
+```powershell
+ollama pull llama3.2:3b
+ollama list
+```
+
+The download needs an internet connection and disk space; running it also uses your computer's RAM and processing power. This is an example local model, not a measured accuracy recommendation. Other installed local models can be used by substituting their exact names below.
+
+### 2. Restart SilverTrap with that model enabled
+
+If SilverTrap is running, press **Ctrl+C** in its terminal first. From the project folder in that same PowerShell window, run:
+
+```powershell
+$env:SILVERTRAP_OLLAMA_MODEL = "llama3.2:3b"
+python -m silvertrap serve --seed
+```
+
+Keep Ollama running in the background. Reopen the dashboard and log in. Inside an investigation, **Local model second opinion** should now be enabled. Click it, then review the returned hypotheses in **Evidence & gaps**. A valid model response may contain no additional hypotheses.
+
+With a fully local model such as the example above, this uses **no paid API tokens and no ChatGPT quota**. SilverTrap sends the evidence window to Ollama on your own computer at `127.0.0.1:11434`. Avoid cloud-routed models if your requirement is local processing.
+
+The `$env:` setting applies to that PowerShell session. Repeat the two-line startup block when starting from a new terminal. Local model attempts are limited to four per case; repeated analysis of unchanged evidence uses the cache. A slow model can exceed the current timeout, and malformed or unsupported quotes are rejected; the default findings remain available.
+
+## Stop, reopen, or update
+
+**Stop:** press **Ctrl+C** in the server terminal. Your cases save automatically in the project's local `data` folder.
+
+**Reopen your Desktop copy:**
+
+```powershell
+Set-Location (Join-Path ([Environment]::GetFolderPath('Desktop')) 'Silverfish')
+python -m silvertrap serve --seed
+```
+
+For local AI, set `SILVERTRAP_OLLAMA_MODEL` as shown above before starting. `--seed` does not duplicate the sample cases when the database already contains cases.
+
+**Update a Git clone:** stop the server, open PowerShell in the project folder, and run `git pull --ff-only`, then start SilverTrap again. Your `data` folder is excluded from Git. A ZIP download does not support `git pull`.
+
+## Common problems
+
+| What you see | What to do |
+| --- | --- |
+| `py` is not recognized | Use the documented `python` commands instead; the separate `py` launcher is not required. |
+| `python` is not recognized, or opens the Microsoft Store | Install Python, reopen PowerShell, and check `python --version`. |
+| `No module named silvertrap` | Open PowerShell in the folder containing `README.md` and the `silvertrap` folder, not `C:\Windows\System32`. |
+| Git says `Repository not found` or authentication fails | This repository is private. Confirm that your GitHub account has access and Git is authenticated. |
+| Git says the `Silverfish` folder already exists | Open the existing project folder instead of cloning into it again. |
+| The dashboard cannot be reached | Keep the server terminal open and use the exact address it prints. |
+| The access code is rejected | Copy the code from the currently running server terminal. |
+| `Next exchange` is disabled | The sample is complete, the case is paused/closed, or emergency stop is active. For a new walkthrough, create a simulation with the automatic-completion box unchecked. |
+| The local-model button is disabled | Set the model environment variable in the terminal that starts SilverTrap, then restart it. Closed cases and emergency stop also disable analysis. |
+| Local model is unavailable or its evidence fails validation | Check that Ollama is running and that `ollama list` includes the configured model. A timeout or rejected output consumes an attempt; unchanged failed evidence is not automatically retried. |
+
+## macOS or Linux
+
+Clone the repository, change into its folder, and run:
 
 ```sh
+git clone https://github.com/josephjilovec/Silverfish.git
+cd Silverfish
 python3 -m silvertrap serve --seed
 ```
 
-`--seed` adds three **fictional simulation cases only when the database is empty**. Your work persists in `data/silvertrap.sqlite3`; restart with the same data directory to resume it. This folder, its access code, exports, and backups are excluded from Git.
+Python 3.11 or newer is required. Open the address printed in the terminal and use its access code. For an installed local Ollama model, start with:
+
+```sh
+SILVERTRAP_OLLAMA_MODEL=llama3.2:3b python3 -m silvertrap serve --seed
+```
+
+![SilverTrap command center with synthetic cases and cross-case indicators](docs/images/command-center.jpg)
+
+## Technical reference
+
+The steps above are enough to use and test the product. Developers and operators can expand the reference below for architecture, tests, exports, integration boundaries, and deployment options.
+
+<details>
+<summary>Open developer and advanced operating documentation</summary>
 
 ## What you can do
 
@@ -83,7 +246,7 @@ If you already have Ollama running locally with a model installed, set its exact
 
 ```powershell
 $env:SILVERTRAP_OLLAMA_MODEL = "your-installed-local-model"
-py -3 -m silvertrap serve
+python -m silvertrap serve
 ```
 
 ```sh
@@ -133,3 +296,5 @@ The compose service binds only to the host loopback address, runs as a non-root 
 - [Evaluation and next milestones](docs/ROADMAP.md)
 
 This repository is intended to stay private. Runtime evidence, tokens, logs, and personal data belong outside source control.
+
+</details>
